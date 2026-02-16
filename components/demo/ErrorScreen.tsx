@@ -29,7 +29,7 @@ export default function ErrorScreen() {
   }, [client]);
 
   const quotaErrorMessage =
-    'Gemini Live API in AI Studio has a limited free quota each day. Come back tomorrow to continue.';
+    'Eburon Voyager in AI Studio has a limited free quota each day. Come back tomorrow to continue.';
 
   let errorMessage = 'Something went wrong. Please try again.';
   let rawMessage: string | null = error?.message || null;

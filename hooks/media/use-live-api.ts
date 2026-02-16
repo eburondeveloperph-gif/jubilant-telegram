@@ -27,6 +27,8 @@ import VolMeterWorket from '../../lib/worklets/vol-meter';
 import { useLogStore, useSettings, useUI, useConnectionStore } from '@/lib/state';
 import { executeRecallMemory, executeSaveMemory } from '@/lib/memory';
 
+import { DEFAULT_LIVE_API_MODEL, DEFAULT_VOICE, EBURON_GEMINI_MODELS } from '../../lib/constants';
+
 export type UseLiveApiResults = {
   client: GenAILiveClient;
   setConfig: (config: LiveConnectConfig) => void;
@@ -51,7 +53,9 @@ export function useLiveApi({
 }): UseLiveApiResults {
   const { model, localModel } = useSettings();
   const { toolBrokerUrl, toolBrokerApiKey, ollamaUrl } = useConnectionStore();
-  const client = useMemo(() => new GenAILiveClient(apiKey, model), [apiKey, model]);
+
+  const resolvedModel = (EBURON_GEMINI_MODELS as any)[model] || model;
+  const client = useMemo(() => new GenAILiveClient(apiKey, resolvedModel), [apiKey, resolvedModel]);
 
   const audioStreamerRef = useRef<AudioStreamer | null>(null);
 

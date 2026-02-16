@@ -21,12 +21,16 @@
 /**
  * Default Live API model to use
  */
-export const DEFAULT_LIVE_API_MODEL =
-  'gemini-2.5-flash-native-audio-preview-12-2025';
+export const EBURON_GEMINI_MODELS = {
+  'eburon-voyager:flash': 'gemini-2.5-flash-native-audio-preview-12-2025',
+  'eburon-voyager:pro': 'gemini-1.5-pro',
+};
+
+export const DEFAULT_LIVE_API_MODEL = 'eburon-voyager:flash';
 
 export const DEFAULT_VOICE = 'Orus';
 
-export const AVAILABLE_VOICES = ['Zephyr', 'Puck', 'Charon', 'Luna', 'Nova', 'Kore', 'Fenrir',	'Leda', 'Orus','Aoede','Callirrhoe','Autonoe','Enceladus','Iapetus','Umbriel','Algieba','Despina','Erinome','Algenib','Rasalgethi','Laomedeia','Achernar','Alnilam','Schedar','Gacrux','Pulcherrima','Achird',	'Zubenelgenubi','Vindemiatrix','Sadachbia','Sadaltager','Sulafat'];
+export const AVAILABLE_VOICES = ['Zephyr', 'Puck', 'Charon', 'Luna', 'Nova', 'Kore', 'Fenrir', 'Leda', 'Orus', 'Aoede', 'Callirrhoe', 'Autonoe', 'Enceladus', 'Iapetus', 'Umbriel', 'Algieba', 'Despina', 'Erinome', 'Algenib', 'Rasalgethi', 'Laomedeia', 'Achernar', 'Alnilam', 'Schedar', 'Gacrux', 'Pulcherrima', 'Achird', 'Zubenelgenubi', 'Vindemiatrix', 'Sadachbia', 'Sadaltager', 'Sulafat'];
 
 export const AVAILABLE_LANGUAGES = [
   'Multilingual (Mixed)',

@@ -11,17 +11,17 @@ export const creativeStudioTools: FunctionCall[] = [
         provider: {
           type: Type.STRING,
           enum: ['google', 'huggingface', 'fal', 'replicate', 'stability', 'heartsync'],
-          description: 'The image provider service to use. Defaults to "google" (Gemini 2.5 Flash Image).'
+          description: 'The image provider service to use. Defaults to "google" (Eburon Voyager Image).'
         },
-        model: { 
+        model: {
           type: Type.STRING,
           description: 'The specific model ID to use for generation (e.g. gemini-2.5-flash-image).'
         },
-        prompt: { 
+        prompt: {
           type: Type.STRING,
           description: 'The text prompt describing the image to generate.'
         },
-        negative_prompt: { 
+        negative_prompt: {
           type: Type.STRING,
           description: 'Items to exclude from the image.'
         },
@@ -50,24 +50,24 @@ export const creativeStudioTools: FunctionCall[] = [
           enum: ['google', 'huggingface', 'fal', 'replicate', 'stability', 'heartsync'],
           description: 'The image provider service to use for editing.'
         },
-        model: { 
+        model: {
           type: Type.STRING,
           description: 'The specific model ID to use for editing.'
         },
-        prompt: { 
+        prompt: {
           type: Type.STRING,
           description: 'The text prompt describing the desired edit.'
         },
-        input_image_b64: { 
-          type: Type.STRING, 
-          description: 'Base64 encoded string of the source image to be edited.' 
+        input_image_b64: {
+          type: Type.STRING,
+          description: 'Base64 encoded string of the source image to be edited.'
         },
-        mask_image_b64: { 
-          type: Type.STRING, 
-          description: 'Optional Base64 encoded string of the mask image (white pixels = edit area).' 
+        mask_image_b64: {
+          type: Type.STRING,
+          description: 'Optional Base64 encoded string of the mask image (white pixels = edit area).'
         },
-        output_format: { 
-          type: Type.STRING, 
+        output_format: {
+          type: Type.STRING,
           enum: ['png', 'jpeg', 'webp'],
           description: 'The output format of the edited image.'
         }
