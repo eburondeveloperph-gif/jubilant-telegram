@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: always
+
+  api-gateway:
+    build:
+      context: ./tooling/api-gateway
+    container_name: eburon-gateway
+    ports:
+      - "5050:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    restart: always
+
+volumes:
+  ollama-data:
