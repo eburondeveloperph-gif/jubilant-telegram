@@ -17,6 +17,7 @@ interface AppConfig {
   colorClass: string;
   description: string;
   features: string[];
+  url?: string;
 }
 
 const APPS: AppConfig[] = [
@@ -189,7 +190,38 @@ const APPS: AppConfig[] = [
     prompt: 'I want to translate something.',
     colorClass: 'translate',
     description: 'Real-time multi-lingual translation service.',
-    features: ['Grammar checks', 'Cultural context', '100+ languages']
+    features: ['Grammar checks', 'Cultural context', '100+ languages'],
+    url: 'https://orbit-translator.vercel.app/'
+  },
+  {
+    id: 'voice',
+    label: 'Voice Assistant',
+    icon: 'mic',
+    prompt: 'Use the voice assistant for Google Workspace commands.',
+    colorClass: 'voice',
+    description: 'Voice-controlled Google Workspace automation.',
+    features: ['Email creation', 'Calendar events', 'Docs & Sheets', 'Drive files'],
+    url: 'https://mainhub-one.vercel.app/'
+  },
+  {
+    id: 'stt',
+    label: 'Speech to Text',
+    icon: 'speech_to_text',
+    prompt: 'Start speech-to-text transcription.',
+    colorClass: 'stt',
+    description: 'Convert speech to text with AI.',
+    features: ['Real-time transcription', 'Multiple languages', 'Speaker diarization'],
+    url: 'https://stt-app-theta.vercel.app/'
+  },
+  {
+    id: 'tts',
+    label: 'Text to Speech',
+    icon: 'text_to_speech',
+    prompt: 'Start text-to-speech synthesis.',
+    colorClass: 'tts',
+    description: 'Convert text to natural speech.',
+    features: ['Natural voices', 'Multiple languages', 'Voice cloning'],
+    url: 'https://tts-app-liard-seven.vercel.app/'
   },
   {
     id: 'vps',
@@ -217,6 +249,12 @@ export default function AppLauncher() {
   const [selectedApp, setSelectedApp] = React.useState<AppConfig | null>(null);
 
   const handleLaunchApp = (app: AppConfig) => {
+    if (app.url) {
+      window.open(app.url, '_blank');
+      setSelectedApp(null);
+      return;
+    }
+
     if (!connected) {
       connect();
     }

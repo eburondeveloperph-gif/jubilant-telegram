@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+// Use native fetch (Node 18+)
 
 const RUNNER_URL = process.env.RUNNER_URL || "http://127.0.0.1:5055";
 const RUNNER_TOKEN = process.env.RUNNER_TOKEN || "change-me";

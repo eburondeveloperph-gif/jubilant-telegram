@@ -164,6 +164,18 @@
 }
 
 /* Pink */
+.app-item.voice .app-icon {
+  color: #8B5CF6;
+  border-color: #8B5CF6;
+}
+
+/* Purple/Indigo for voice */
+.app-item.stt .app-icon {
+  color: #6366F1;
+  border-color: #6366F1;
+}
+
+/* Indigo for STT */
 
 
 .app-label {
@@ -282,6 +294,16 @@
 .detail-icon.imagine {
   color: #EC407A;
   border-color: #EC407A;
+}
+
+.detail-icon.voice {
+  color: #8B5CF6;
+  border-color: #8B5CF6;
+}
+
+.detail-icon.stt {
+  color: #6366F1;
+  border-color: #6366F1;
 }
 
 .detail-title h3 {

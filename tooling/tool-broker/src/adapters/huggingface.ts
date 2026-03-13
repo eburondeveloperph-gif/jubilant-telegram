@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+// Use native fetch (Node 18+)
 
 export async function imageGenerateHF(args: any) {
   const token = process.env.HF_TOKEN;

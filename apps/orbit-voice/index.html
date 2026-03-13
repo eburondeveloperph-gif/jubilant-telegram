@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Voice Assistant</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-main: #0a0a0f;
+            --bg-sidebar: #050508;
+            --bg-card: #12121a;
+            --bg-dock: rgba(18, 18, 26, 0.9);
+            --text-primary: #ffffff;
+            --text-secondary: #71717a;
+            --border: rgba(255,255,255,0.08);
+            --accent-purple: #8b5cf6;
+            --accent-indigo: #6366f1;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --shadow: 0 10px 40px rgba(0,0,0,0.5);
+            --gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg-main); color: var(--text-primary); min-height: 100vh; }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border);
+        }
+        .brand { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .brand span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .back-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; color: var(--text-secondary); cursor: pointer; text-decoration: none; font-size: 0.9rem; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px 100px; text-align: center; }
+
+        .mic-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s;
+        }
+        .mic-btn:hover { transform: scale(1.05); }
+        .mic-btn.recording { background: var(--accent-red); box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); animation: pulse 1.5s infinite; }
+        .mic-btn svg { width: 48px; height: 48px; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .status { color: var(--text-secondary); margin-bottom: 30px; font-size: 0.95rem; }
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+        .status-dot.online { background: var(--accent-green); }
+        .status-dot.recording { background: var(--accent-red); animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .transcript-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+        .transcript-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .transcript-text { font-size: 1.1rem; line-height: 1.5; white-space: pre-wrap; }
+
+        .commands {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+        }
+        .commands h3 { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px; }
+        .command-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .command-item:last-child { border-bottom: none; }
+        .command-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--bg-main); }
+        .command-text { font-size: 0.9rem; color: var(--text-secondary); }
+        .command-text strong { color: var(--text-primary); }
+
+        .result-box {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .result-box.active { display: block; }
+        .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .result-icon { color: var(--accent-purple); }
+
+        .dock-container { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 15px; }
+        .dock { background: var(--bg-dock); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; padding: 8px 12px; display: flex; align-items: center; gap: 6px; box-shadow: var(--shadow); }
+        .dock-btn { width: 46px; height: 46px; border-radius: 18px; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .dock-btn:hover { color: var(--text-primary); }
+        .dock-btn.active { color: var(--accent-purple); background: rgba(139, 92, 246, 0.15); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="brand">
+            <i data-lucide="mic-2" style="color: var(--accent-purple)"></i>
+            <span>Orbit Voice</span>
+        </div>
+        <a href="https://mainhub-one.vercel.app" class="back-btn"><i data-lucide="home"></i> Home</a>
+    </header>
+
+    <div class="container">
+        <button id="micBtn" class="mic-btn" onclick="toggleRecording()">
+            <i data-lucide="mic"></i>
+        </button>
+        
+        <div class="status">
+            <span id="statusDot" class="status-dot online"></span>
+            <span id="statusText">Ready - Click to speak</span>
+        </div>
+
+        <div class="transcript-box">
+            <div class="transcript-label">Speech to Text</div>
+            <div id="transcript" class="transcript-text">Your speech will appear here...</div>
+        </div>
+
+        <div id="resultBox" class="result-box">
+            <div class="result-header">
+                <i data-lucide="check-circle" class="result-icon"></i>
+                <span style="font-weight: 600;">Action Executed</span>
+            </div>
+            <div id="resultText" class="transcript-text"></div>
+        </div>
+
+        <div class="commands">
+            <h3>Voice Commands</h3>
+            <div class="command-item">
+                <div class="command-icon"><i data-lucide="mail" style="color: #ef4444"></i></div>
+                <div class="command-text"><strong>Send email</strong> to person@email.com</div>
+            </div>
+            <div class="command-item">
+                <div class="command-icon"><i data-lucide="calendar" style="color: #3b82f6"></i></div>
+                <div class="command-text"><strong>Create event</strong> meeting name at 3pm</div>
+            </div>
+            <div class="command-item">
+                <div class="command-icon"><i data-lucide="table" style="color: #22c55e"></i></div>
+                <div class="command-text"><strong>Create spreadsheet</strong> for budget</div>
+            </div>
+            <div class="command-item">
+                <div class="command-icon"><i data-lucide="file-text" style="color: #fbbf24"></i></div>
+                <div class="command-text"><strong>Create document</strong> meeting notes</div>
+            </div>
+            <div class="command-item">
+                <div class="command-icon"><i data-lucide="presentation" style="color: #f472b6"></i></div>
+                <div class="command-text"><strong>Create presentation</strong> quarterly report</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        const STT_API = 'https://stt-api-rose.vercel.app/api/transcribe';
+
+        function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await transcribeAudio(audioBlob);
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                
+                document.getElementById('micBtn').classList.add('recording');
+                document.getElementById('statusDot').className = 'status-dot recording';
+                document.getElementById('statusText').textContent = 'Listening...';
+            } catch (err) {
+                document.getElementById('statusText').textContent = 'Microphone error: ' + err.message;
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+            }
+            isRecording = false;
+            
+            document.getElementById('micBtn').classList.remove('recording');
+            document.getElementById('statusDot').className = 'status-dot online';
+            document.getElementById('statusText').textContent = 'Processing...';
+        }
+
+        async function transcribeAudio(audioBlob) {
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'recording.webm');
+
+            try {
+                const response = await fetch(STT_API, { method: 'POST', body: formData });
+                const data = await response.json();
+                
+                document.getElementById('transcript').textContent = data.text || 'No speech detected';
+                document.getElementById('statusText').textContent = 'Ready';
+                
+                if (data.text) {
+                    processCommand(data.text);
+                }
+            } catch (err) {
+                document.getElementById('transcript').textContent = 'Transcription error';
+                document.getElementById('statusText').textContent = 'Error';
+            }
+        }
+
+        async function processCommand(text) {
+            const cmd = text.toLowerCase();
+            let action = null;
+
+            if (cmd.includes('send email') || cmd.includes('email to')) {
+                action = { type: 'email', text: 'Opening Gmail...' };
+            } else if (cmd.includes('create event') || cmd.includes('schedule')) {
+                action = { type: 'calendar', text: 'Opening Calendar...' };
+            } else if (cmd.includes('spreadsheet') || cmd.includes('sheet')) {
+                action = { type: 'sheets', text: 'Creating Spreadsheet...' };
+            } else if (cmd.includes('document') || cmd.includes('doc')) {
+                action = { type: 'docs', text: 'Creating Document...' };
+            } else if (cmd.includes('presentation') || cmd.includes('slides')) {
+                action = { type: 'slides', text: 'Creating Presentation...' };
+            }
+
+            if (action) {
+                const resultBox = document.getElementById('resultBox');
+                document.getElementById('resultText').textContent = action.text;
+                resultBox.classList.add('active');
+
+                // Simulate action
+                setTimeout(() => {
+                    if (action.type === 'email') window.open('https://mail.google.com/mail/u/0/', '_blank');
+                    else if (action.type === 'calendar') window.open('https://calendar.google.com/calendar/r', '_blank');
+                    else if (action.type === 'sheets') window.open('https://docs.google.com/spreadsheets/u/0/', '_blank');
+                    else if (action.type === 'docs') window.open('https://docs.google.com/document/u/0/', '_blank');
+                    else if (action.type === 'slides') window.open('https://docs.google.com/presentation/u/0/', '_blank');
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

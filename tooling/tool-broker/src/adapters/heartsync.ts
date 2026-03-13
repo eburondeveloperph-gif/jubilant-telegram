@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+// Use native fetch (Node 18+)
 
 // Assumes the Heartsync app is running locally or accessible via URL
 const HEARTSYNC_URL = process.env.HEARTSYNC_URL || "http://127.0.0.1:7860";
